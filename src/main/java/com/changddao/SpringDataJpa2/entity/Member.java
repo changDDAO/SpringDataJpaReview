@@ -11,7 +11,7 @@ import static javax.persistence.FetchType.*;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id","username","age"})
-public class Member {
+public class Member extends JpaBaseEntity{
     @Id
     @GeneratedValue
     @Column(name = "member_id")
@@ -30,6 +30,7 @@ public class Member {
     public Member(String name, int age, Team team) {
         this.username = name;
         this.age = age;
+        this.team = team;
         if(team!=null){
             changeTeam(team);
         }

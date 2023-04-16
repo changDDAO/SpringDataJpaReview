@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
+@Rollback(value = false)
 class MemberJpaRepositoryTest {
     @Autowired
     MemberJpaRepository memberJpaRepository;
@@ -81,6 +83,31 @@ class MemberJpaRepositoryTest {
         //then
         assertThat(members.size()).isEqualTo(3);
         assertThat(totalCount).isEqualTo(5);
+
+    }
+
+
+    @Test
+    public void bulkTest(){
+    //given
+        Member member1  = new Member("member1",10);
+        Member member2  = new Member("member2",15);
+        Member member3  = new Member("member3",13);
+        Member member4  = new Member("member4",20);
+        Member member5  = new Member("member5",30);
+        memberJpaRepository.save(member1);
+        memberJpaRepository.save(member2);
+        memberJpaRepository.save(member3);
+        memberJpaRepository.save(member4);
+        memberJpaRepository.save(member5);
+
+
+    //when
+        int result = memberJpaRepository.bulkUpdate(15);
+        assertThat(result).isEqualTo(3);
+
+
+        //then
 
     }
 

@@ -29,6 +29,9 @@ class MemberRepositoryTest {
     MemberRepository memberRepository;
     @Autowired
     TeamRepository teamRepository;
+    
+    @Autowired
+    EntityManager em;
     @Test
     public void simpleTest() throws Exception {
         //given
@@ -154,6 +157,103 @@ class MemberRepositoryTest {
 
 
     }
+    @Test
+    public void bulkTest(){
+        //given
+        Member member1  = new Member("member1",10);
+        Member member2  = new Member("member2",15);
+        Member member3  = new Member("member3",13);
+        Member member4  = new Member("member4",20);
+        Member member5  = new Member("member5",30);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+        memberRepository.save(member3);
+        memberRepository.save(member4);
+        memberRepository.save(member5);
 
 
-}
+        //when
+        int result = memberRepository.bulkAgeUpdate(15);
+        assertThat(result).isEqualTo(3);
+
+
+        //then
+
+    }
+    @Test
+    public void fetchJoinTest(){
+    //given
+    Team teamA = new Team("teamA");
+    Team teamB = new Team("teamB");
+    teamRepository.save(teamA);
+    teamRepository.save(teamB);
+        Member member1  = new Member("member1",10,teamA);
+        Member member2  = new Member("member2",15,teamB);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        //when
+        List<Member> members = memberRepository.memberFetchJoin();
+        for (Member member : members) {
+            System.out.println("member.getUsername() = " + member.getUsername());
+            System.out.println("member.getTeam().getName()"+member.getTeam().getName());
+        }
+
+
+
+    //then
+
+    }
+    @Test
+    public void customRepository(){
+    //given
+        Member member1  = new Member("member1",10);
+        Member member2  = new Member("member2",15);
+        Member member3  = new Member("member3",13);
+        Member member4  = new Member("member4",20);
+        Member member5  = new Member("member5",30);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+        memberRepository.save(member3);
+        memberRepository.save(member4);
+        memberRepository.save(member5);
+
+
+
+    //when
+        List<Member> members = memberRepository.findMemberCustom();
+
+
+        //then
+        for (Member member : members) {
+            System.out.println("member = " + member);
+
+        }
+
+    }
+    @Test
+    public void JpaBaseEntityTest() throws Exception {
+    //given
+        Member member1 = new Member("changho Youn", 29);
+        Member member2 = new Member("changho Youn", 29);
+        
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+        
+        //when
+        Thread.sleep(1000);
+        member2.setUsername("jina Kim");
+        em.flush();
+        em.clear();
+        //then
+        Member member = memberRepository.findById(member2.getId()).get();
+        System.out.println("member.getUsername() = " + member.getUsername());
+        System.out.println("member.getCreatedDate() = " + member.getCreatedDate());
+        System.out.println("member.getCreatedDate() = " + member.getUpdatedDate());
+
+
+    }
+
+    }
+
+

@@ -5,13 +5,14 @@ import com.changddao.SpringDataJpa2.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface MemberRepository extends JpaRepository<Member,Long> {
+public interface MemberRepository extends JpaRepository<Member,Long>, MemberRepositoryCustom{
     @Query("select m from Member m where m.username = :username and m.age = :age")
     List<Member> findUser(@Param("username")String username, @Param("age") int age);
 
@@ -21,6 +22,11 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     List<MemberDto> findMemberDto();
 
     Page<Member> findByAge(int age, Pageable pageable);
+    @Modifying
+    @Query("update Member m set m.age = m.age+1 where m.age>=:age")
+    int bulkAgeUpdate(@Param("age") int age);
+    @Query("select m from Member m left join fetch m.team")
+    List<Member> memberFetchJoin();
 
 
 }
